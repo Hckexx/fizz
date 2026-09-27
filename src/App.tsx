@@ -511,142 +511,146 @@ function Dot() {
 function Envelope({ open, onToggle }: { open: boolean; onToggle: () => void }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="relative" style={{ display: 'inline-block' }}>
-        {/* Envelope button */}
-        <button
+      <div
+        className="relative"
+        style={{
+          width: 'clamp(260px, 72vw, 320px)',
+          paddingTop: 'clamp(200px, 55vw, 280px)', // reserve space for letter
+        }}
+      >
+        {/* Envelope — always visible, letter emerges from inside */}
+        <div
           onClick={onToggle}
+          role="button"
           aria-label={open ? 'Close letter' : 'Open letter'}
-          className="relative block focus:outline-none"
           style={{
-            WebkitTapHighlightColor: 'transparent',
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
+            position: 'relative',
+            width: '100%',
+            aspectRatio: '3 / 2',
             cursor: 'pointer',
+            perspective: '1400px',
+            WebkitTapHighlightColor: 'transparent',
           }}
         >
+          {/* Letter — sits inside envelope, slides UP when open */}
           <div
-            className="relative"
             style={{
-              width: 'clamp(240px, 65vw, 300px)',
-              height: 'clamp(150px, 40vw, 185px)',
-              perspective: '1200px',
+              position: 'absolute',
+              left: '5%',
+              right: '5%',
+              bottom: '8%',
+              background: '#f4e9e2',
+              padding: '22px 24px',
+              borderRadius: '2px',
+              fontFamily: "'Caveat', cursive",
+              fontSize: 'clamp(15px, 4vw, 17px)',
+              lineHeight: 1.5,
+              color: '#3d2830',
+              boxShadow: '0 14px 34px -10px rgba(0,0,0,0.45)',
+              opacity: open ? 1 : 0,
+              transform: open
+                ? 'translateY(calc(-100% - 6%))'
+                : 'translateY(0)',
+              transition:
+                'transform 0.95s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.45s ease 0.25s',
+              zIndex: 1, // BELOW pocket and flap (so it hides inside envelope when closed)
+              textAlign: 'left',
+              pointerEvents: open ? 'auto' : 'none',
             }}
           >
-            {/* Back panel */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(160deg, #241518 0%, #130a0e 100%)',
-                border: '1px solid rgba(196, 96, 122, 0.4)',
-                borderRadius: '4px',
-                boxShadow: '0 24px 50px -15px rgba(0,0,0,0.7)',
-              }}
-            />
-
-            {/* Pocket (front, V-shape at top) */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(160deg, #2a1a1e 0%, #1a1014 100%)',
-                border: '1px solid rgba(196, 96, 122, 0.35)',
-                borderRadius: '4px',
-                clipPath:
-                  'polygon(0 42%, 50% 100%, 100% 42%, 100% 100%, 0 100%)',
-                zIndex: 3,
-              }}
-            />
-
-            {/* Top flap (triangle pointing down) */}
-            <div
-              style={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                top: 0,
-                height: '58%',
-                background:
-                  'linear-gradient(160deg, #2f1c22 0%, #1a1014 100%)',
-                border: '1px solid rgba(196, 96, 122, 0.5)',
-                borderBottom: 'none',
-                clipPath: 'polygon(0 0, 100% 0, 50% 100%)',
-                transformOrigin: 'top center',
-                transform: open ? 'rotateX(-180deg)' : 'rotateX(0deg)',
-                transition:
-                  'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)',
-                zIndex: 4,
-                borderRadius: '4px 4px 0 0',
-                backfaceVisibility: 'visible',
-              }}
-            />
-
-            {/* Wax seal */}
-            <div
-              style={{
-                position: 'absolute',
-                left: '50%',
-                top: '42%',
-                width: 'clamp(30px, 8vw, 38px)',
-                height: 'clamp(30px, 8vw, 38px)',
-                borderRadius: '50%',
-                background:
-                  'radial-gradient(circle at 32% 32%, #f0b6c4 0%, #c4607a 65%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: "'Cormorant Garamond', serif",
-                fontStyle: 'italic',
-                fontSize: 'clamp(14px, 3.5vw, 17px)',
-                color: '#3d0f1c',
-                zIndex: 5,
-                transform: 'translate(-50%, -50%)',
-                transition: 'opacity 0.35s ease',
-                opacity: open ? 0 : 1,
-                boxShadow:
-                  '0 4px 12px rgba(196,96,122,0.5), inset 0 -2px 4px rgba(0,0,0,0.2)',
-                pointerEvents: 'none',
-              }}
-            >
-              F
-            </div>
+            {LETTER_LINES.map((line, i) => (
+              <p
+                key={i}
+                style={{
+                  margin: 0,
+                  whiteSpace: 'pre-wrap',
+                  minHeight: '1em',
+                }}
+              >
+                {line || '\u00A0'}
+              </p>
+            ))}
           </div>
-        </button>
 
-        {/* Letter — appears above envelope, slides up */}
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: 'calc(100% + 14px)',
-            width: 'min(320px, 88vw)',
-            background: '#f4e9e2',
-            padding: '22px 24px',
-            borderRadius: '2px',
-            fontFamily: "'Caveat', cursive",
-            fontSize: 'clamp(15px, 4vw, 17px)',
-            lineHeight: 1.5,
-            color: '#3d2830',
-            boxShadow:
-              '0 20px 50px -10px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.15)',
-            opacity: open ? 1 : 0,
-            transform: open
-              ? 'translateX(-50%) translateY(0) scale(1)'
-              : 'translateX(-50%) translateY(28px) scale(0.96)',
-            transformOrigin: 'bottom center',
-            transition:
-              'opacity 0.7s ease, transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)',
-            pointerEvents: open ? 'auto' : 'none',
-            zIndex: 6,
-            textAlign: 'left',
-          }}
-        >
-          {LETTER_LINES.map((line, i) => (
-            <p key={i} style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
-              {line || '\u00A0'}
-            </p>
-          ))}
+          {/* Envelope back panel */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background:
+                'linear-gradient(160deg, #241518 0%, #130a0e 100%)',
+              border: '1px solid rgba(196, 96, 122, 0.4)',
+              borderRadius: '4px',
+              boxShadow: '0 24px 50px -15px rgba(0,0,0,0.7)',
+              zIndex: 0,
+            }}
+          />
+
+          {/* Front pocket (V-shape at top, covers letter while closed) */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background:
+                'linear-gradient(160deg, #2a1a1e 0%, #1a1014 100%)',
+              border: '1px solid rgba(196, 96, 122, 0.35)',
+              borderRadius: '4px',
+              clipPath:
+                'polygon(0 42%, 50% 92%, 100% 42%, 100% 100%, 0 100%)',
+              zIndex: 2,
+            }}
+          />
+
+          {/* Top flap (rotates up when open) */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '58%',
+              background:
+                'linear-gradient(160deg, #2f1c22 0%, #1a1014 100%)',
+              clipPath: 'polygon(0 0, 100% 0, 50% 100%)',
+              transformOrigin: 'top center',
+              transform: open ? 'rotateX(178deg)' : 'rotateX(0deg)',
+              transition: 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)',
+              zIndex: 3,
+              borderRadius: '4px 4px 0 0',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.35)',
+              backfaceVisibility: 'hidden',
+            }}
+          />
+
+          {/* Wax seal */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '48%',
+              width: 'clamp(32px, 9vw, 42px)',
+              height: 'clamp(32px, 9vw, 42px)',
+              borderRadius: '50%',
+              background:
+                'radial-gradient(circle at 32% 32%, #f0b6c4 0%, #c4607a 65%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: "'Cormorant Garamond', serif",
+              fontStyle: 'italic',
+              fontSize: 'clamp(15px, 4vw, 18px)',
+              color: '#3d0f1c',
+              zIndex: 4,
+              transform: 'translate(-50%, -50%)',
+              opacity: open ? 0 : 1,
+              transition: 'opacity 0.3s ease',
+              boxShadow:
+                '0 4px 12px rgba(196,96,122,0.5), inset 0 -2px 4px rgba(0,0,0,0.2)',
+              pointerEvents: 'none',
+            }}
+          >
+            F
+          </div>
         </div>
       </div>
 
