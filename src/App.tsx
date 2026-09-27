@@ -539,8 +539,8 @@ function Envelope({
               textAlign: 'left',
 
               transform: open
-                ? 'translateY(calc(-100% - 18px)) rotate(-0.4deg)'
-                : 'translateY(0) rotate(0deg)',
+  ? 'translateY(-145px) rotate(-0.4deg)'
+  : 'translateY(0) rotate(0deg)',
 
               opacity: open ? 1 : 0,
 
@@ -571,41 +571,51 @@ function Envelope({
 
             {/* Letter content */}
             <div
-              style={{
-                position: 'relative',
-                zIndex: 1,
-              }}
-            >
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: '1.15em',
-                  marginBottom: '10px',
-                }}
-              >
-                Bebe,
-              </p>
+  style={{
+    position: 'relative',
+    zIndex: 1,
+  }}
+>
+  <p
+    style={{
+      margin: 0,
+      fontSize: '1.18em',
+      marginBottom: '8px',
+    }}
+  >
+    Bebe,
+  </p>
 
-              <p style={{ margin: 0 }}>
-                This little countdown isn't really about a date.
-                It's about you.
-              </p>
+  <p style={{ margin: 0 }}>
+    This little countdown isn't really about a date.
+    It's about you.
+  </p>
 
-              <p style={{ margin: '10px 0 0' }}>
-                I can't wait to see your smile on December 9th.
-              </p>
+  <p style={{ margin: '9px 0 0' }}>
+    I just wanted you to know that somewhere along the way,
+    you became someone very special to me.
+  </p>
 
-              <p
-                style={{
-                  margin: '14px 0 0',
-                  textAlign: 'right',
-                  fontStyle: 'italic',
-                }}
-              >
-                — always, me
-              </p>
-            </div>
-          </div>
+  <p style={{ margin: '9px 0 0' }}>
+    And now I can't wait for December 9th —
+    for your smile, your presence, and that moment
+    I've been looking forward to.
+  </p>
+
+  <p style={{ margin: '10px 0 0' }}>
+    Until then, keep this little secret close.
+  </p>
+
+  <p
+    style={{
+      margin: '9px 0 0',
+      textAlign: 'right',
+      fontStyle: 'italic',
+    }}
+  >
+    — always, me ❤️
+  </p>
+</div>
 
           {/* =========================================================
               ENVELOPE BACK
