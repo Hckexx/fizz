@@ -118,9 +118,7 @@ function App() {
     }
     draw()
 
-    const onResize = () => {
-      setup()
-    }
+    const onResize = () => setup()
     window.addEventListener('resize', onResize)
     return () => {
       cancelAnimationFrame(raf)
@@ -502,8 +500,7 @@ function Envelope({
         className="relative"
         style={{
           width: 'clamp(250px, 76vw, 320px)',
-          // Reserve space above the envelope for the letter to slide into
-          paddingTop: 'clamp(260px, 68vw, 360px)',
+          paddingTop: 'clamp(160px, 45vw, 220px)',
         }}
       >
         <button
@@ -512,10 +509,6 @@ function Envelope({
           aria-label={open ? 'Close letter' : 'Open letter'}
           className="relative block w-full appearance-none border-0 bg-transparent p-0 outline-none focus-visible:ring-1 focus-visible:ring-[#c4607a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0b0709]"
           style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
             aspectRatio: '3 / 2',
             cursor: 'pointer',
             perspective: '1400px',
@@ -531,8 +524,7 @@ function Envelope({
               left: '6%',
               right: '6%',
               bottom: '7%',
-              minHeight: '160px',
-              padding: '18px 20px',
+              padding: '22px 22px 24px',
 
               background:
                 'linear-gradient(145deg, #f8eee7 0%, #efe0d8 100%)',
@@ -541,8 +533,8 @@ function Envelope({
               border: '1px solid rgba(95, 55, 65, 0.12)',
 
               fontFamily: "'Caveat', cursive",
-              fontSize: 'clamp(15px, 4vw, 17px)',
-              lineHeight: 1.48,
+              fontSize: 'clamp(16px, 4.4vw, 18px)',
+              lineHeight: 1.5,
               color: '#3d2830',
               textAlign: 'left',
 
@@ -588,45 +580,24 @@ function Envelope({
                 style={{
                   margin: 0,
                   fontSize: '1.15em',
-                  marginBottom: '7px',
+                  marginBottom: '10px',
                 }}
               >
                 Bebe,
               </p>
 
               <p style={{ margin: 0 }}>
-                I don't think a few words could ever explain what you mean to
-                me, but I wanted to try anyway.
+                This little countdown isn't really about a date.
+                It's about you.
               </p>
 
-              <p style={{ margin: '8px 0 0' }}>
-                Somewhere along the way, you became one of my favourite parts
-                of life — the person I think about in the quiet moments, the
-                one who can make an ordinary day feel a little more special.
-              </p>
-
-              <p style={{ margin: '8px 0 0' }}>
-                So this little countdown isn't really about a date. It's about
-                you.
-              </p>
-
-              <p style={{ margin: '8px 0 0' }}>
-                And when December 9th finally arrives, I just hope I get to see
-                that smile of yours and make a memory you'll keep with you.
+              <p style={{ margin: '10px 0 0' }}>
+                I can't wait to see your smile on December 9th.
               </p>
 
               <p
                 style={{
-                  margin: '10px 0 0',
-                  fontSize: '1.05em',
-                }}
-              >
-                Until then, keep a little piece of this with you.
-              </p>
-
-              <p
-                style={{
-                  margin: '8px 0 0',
+                  margin: '14px 0 0',
                   textAlign: 'right',
                   fontStyle: 'italic',
                 }}
