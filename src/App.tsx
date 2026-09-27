@@ -37,31 +37,12 @@ function useCountdown() {
   return time
 }
 
-// Handwriting letter content — EDIT THIS to your own message
-const LETTER_LINES = [
-  'Fizz,',
-  '',
-  "I've been counting down to this",
-  'day for a while now.',
-  '',
-  'Not because of the date.',
-  'Because of you.',
-  '',
-  'There is something waiting on',
-  'December 9th.',
-  '',
-  'And I hope you love it.',
-  '',
-  '— me',
-]
-
 function App() {
   const [phase, setPhase] = useState(0)
   const [envelopeOpen, setEnvelopeOpen] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const countdown = useCountdown()
 
-  // Total days from when countdown began (adjust if you want)
   const TOTAL_DAYS = 104
   const progress = Math.max(
     0,
@@ -71,11 +52,11 @@ function App() {
   // Staged reveal
   useEffect(() => {
     const timers = [
-      setTimeout(() => setPhase(1), 500), // letterbox + heart starts
-      setTimeout(() => setPhase(2), 2400), // name reveals
-      setTimeout(() => setPhase(3), 3600), // divider + subtitle
-      setTimeout(() => setPhase(4), 5200), // countdown
-      setTimeout(() => setPhase(5), 6400), // envelope + signature
+      setTimeout(() => setPhase(1), 500),
+      setTimeout(() => setPhase(2), 2400),
+      setTimeout(() => setPhase(3), 3600),
+      setTimeout(() => setPhase(4), 5200),
+      setTimeout(() => setPhase(5), 6400),
     ]
     return () => timers.forEach(clearTimeout)
   }, [])
@@ -88,15 +69,21 @@ function App() {
     if (!ctx) return
 
     let raf = 0
-    let w = (canvas.width = window.innerWidth)
-    let h = (canvas.height = window.innerHeight)
+    let w = window.innerWidth
+    let h = window.innerHeight
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
-    canvas.width = w * dpr
-    canvas.height = h * dpr
-    canvas.style.width = w + 'px'
-    canvas.style.height = h + 'px'
-    ctx.scale(dpr, dpr)
+
+    const setup = () => {
+      w = window.innerWidth
+      h = window.innerHeight
+      canvas.width = w * dpr
+      canvas.height = h * dpr
+      canvas.style.width = w + 'px'
+      canvas.style.height = h + 'px'
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+    setup()
 
     const dust = Array.from({ length: 45 }, () => ({
       x: Math.random() * w,
@@ -132,13 +119,7 @@ function App() {
     draw()
 
     const onResize = () => {
-      w = window.innerWidth
-      h = window.innerHeight
-      canvas.width = w * dpr
-      canvas.height = h * dpr
-      canvas.style.width = w + 'px'
-      canvas.style.height = h + 'px'
-      ctx.scale(dpr, dpr)
+      setup()
     }
     window.addEventListener('resize', onResize)
     return () => {
@@ -167,7 +148,7 @@ function App() {
         }}
       />
 
-      {/* Warm color overlay (Kodak Portra-ish) */}
+      {/* Warm color overlay */}
       <div
         className="fixed inset-0 pointer-events-none z-[2] mix-blend-soft-light opacity-60"
         style={{
@@ -255,7 +236,7 @@ function App() {
           </svg>
         </div>
 
-        {/* Name — per-letter reveal */}
+        {/* Name */}
         <h1
           className="text-[#f4e4e9] text-center leading-[0.95]"
           style={{
@@ -378,7 +359,7 @@ function App() {
 
       {/* Bottom signature */}
       <div
-        className="mt-8 flex justify-center pointer-events-none"
+        className="mt-8 pb-10 flex justify-center pointer-events-none"
         style={{
           opacity: phase >= 5 ? 1 : 0,
           transition: 'opacity 2s ease 0.6s',
@@ -508,7 +489,6 @@ function Dot() {
 }
 
 // ---------- Envelope ----------
-// ---------- Envelope ----------
 function Envelope({
   open,
   onToggle,
@@ -519,19 +499,23 @@ function Envelope({
   return (
     <div className="flex flex-col items-center">
       <div
-  className="relative"
-  style={{
-    width: 'clamp(250px, 76vw, 320px)',
-    // Reserve vertical space for the letter to slide into
-    paddingTop: 'clamp(240px, 62vw, 340px)',
-  }}
->
+        className="relative"
+        style={{
+          width: 'clamp(250px, 76vw, 320px)',
+          // Reserve space above the envelope for the letter to slide into
+          paddingTop: 'clamp(260px, 68vw, 360px)',
+        }}
+      >
         <button
           type="button"
           onClick={onToggle}
           aria-label={open ? 'Close letter' : 'Open letter'}
           className="relative block w-full appearance-none border-0 bg-transparent p-0 outline-none focus-visible:ring-1 focus-visible:ring-[#c4607a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0b0709]"
           style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
             aspectRatio: '3 / 2',
             cursor: 'pointer',
             perspective: '1400px',
@@ -622,8 +606,8 @@ function Envelope({
               </p>
 
               <p style={{ margin: '8px 0 0' }}>
-                So this little countdown isn't really about a date.
-                It's about you.
+                So this little countdown isn't really about a date. It's about
+                you.
               </p>
 
               <p style={{ margin: '8px 0 0' }}>
@@ -647,7 +631,7 @@ function Envelope({
                   fontStyle: 'italic',
                 }}
               >
-                — always, me ❤️
+                — always, me
               </p>
             </div>
           </div>
@@ -727,8 +711,7 @@ function Envelope({
               zIndex: 2,
               pointerEvents: 'none',
 
-              boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.025)',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.025)',
             }}
           />
 
@@ -750,12 +733,9 @@ function Envelope({
 
               transformOrigin: 'top center',
 
-              transform: open
-                ? 'rotateX(170deg)'
-                : 'rotateX(0deg)',
+              transform: open ? 'rotateX(170deg)' : 'rotateX(0deg)',
 
-              transition:
-                'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
+              transition: 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
 
               zIndex: 3,
 
@@ -838,12 +818,9 @@ function Envelope({
 
           opacity: open ? 0 : 0.7,
 
-          transform: open
-            ? 'translateY(4px)'
-            : 'translateY(0)',
+          transform: open ? 'translateY(4px)' : 'translateY(0)',
 
-          transition:
-            'opacity 0.4s ease, transform 0.4s ease',
+          transition: 'opacity 0.4s ease, transform 0.4s ease',
         }}
       >
         tap to open
@@ -851,4 +828,5 @@ function Envelope({
     </div>
   )
 }
+
 export default App
