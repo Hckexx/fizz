@@ -519,12 +519,13 @@ function Envelope({
   return (
     <div className="flex flex-col items-center">
       <div
-        className="relative"
-        style={{
-          width: 'clamp(250px, 76vw, 320px)',
-          height: 'clamp(175px, 46vw, 215px)',
-        }}
-      >
+  className="relative"
+  style={{
+    width: 'clamp(250px, 76vw, 320px)',
+    // Reserve vertical space for the letter to slide into
+    paddingTop: 'clamp(240px, 62vw, 340px)',
+  }}
+>
         <button
           type="button"
           onClick={onToggle}
