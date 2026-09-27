@@ -39,7 +39,7 @@ function useCountdown() {
 
 function App() {
   const [phase, setPhase] = useState(0)
-  const [envelopeOpen, setEnvelopeOpen] = useState(false)
+  const [letterOpen, setLetterOpen] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const countdown = useCountdown()
 
@@ -60,6 +60,27 @@ function App() {
     ]
     return () => timers.forEach(clearTimeout)
   }, [])
+
+  // ESC to close letter
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLetterOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  // Lock body scroll when letter is open
+  useEffect(() => {
+    if (letterOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [letterOpen])
 
   // Dust particles
   useEffect(() => {
@@ -130,9 +151,14 @@ function App() {
     if ('vibrate' in navigator) navigator.vibrate?.(12)
   }
 
-  const handleEnvelope = () => {
+  const openLetter = () => {
     tap()
-    setEnvelopeOpen((v) => !v)
+    setLetterOpen(true)
+  }
+
+  const closeLetter = () => {
+    tap()
+    setLetterOpen(false)
   }
 
   return (
@@ -186,7 +212,94 @@ function App() {
         }}
       />
 
-      {/* Main content — uses min-height so page can grow/scroll */}
+      {/* ============================================================
+          LETTER BUTTON — top right corner
+         ============================================================ */}
+      <button
+        type="button"
+        onClick={openLetter}
+        aria-label="Open letter"
+        className="fixed top-5 right-5 md:top-7 md:right-7 z-[60] group"
+        style={{
+          opacity: phase >= 4 ? 1 : 0,
+          transform: phase >= 4 ? 'translateY(0)' : 'translateY(-16px)',
+          transition:
+            'opacity 1.4s ease 0.4s, transform 1.4s cubic-bezier(0.65,0,0.35,1) 0.4s',
+          pointerEvents: phase >= 4 ? 'auto' : 'none',
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        {/* Pulse rings */}
+        <span
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{
+            border: '1px solid rgba(196, 96, 122, 0.5)',
+            animation: 'letterPulse 2.8s cubic-bezier(0.65, 0, 0.35, 1) infinite',
+          }}
+        />
+        <span
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{
+            border: '1px solid rgba(196, 96, 122, 0.35)',
+            animation:
+              'letterPulse 2.8s cubic-bezier(0.65, 0, 0.35, 1) infinite 1.4s',
+          }}
+        />
+
+        {/* Inner circle */}
+        <span
+          className="relative flex items-center justify-center rounded-full transition-all duration-500 group-hover:scale-105"
+          style={{
+            width: 'clamp(46px, 11vw, 54px)',
+            height: 'clamp(46px, 11vw, 54px)',
+            background:
+              'linear-gradient(145deg, rgba(40, 22, 28, 0.9), rgba(19, 10, 14, 0.95))',
+            border: '1px solid rgba(196, 96, 122, 0.4)',
+            boxShadow:
+              '0 10px 30px -10px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+          }}
+        >
+          {/* Envelope icon */}
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              width: '44%',
+              height: '44%',
+              color: '#e8a4b5',
+              transition: 'color 0.4s ease',
+            }}
+            className="group-hover:!text-[#f4c3cf]"
+          >
+            <rect x="3" y="6" width="18" height="13" rx="2" />
+            <path d="M3 8l9 6 9-6" />
+          </svg>
+        </span>
+
+        {/* Tooltip */}
+        <span
+          className="absolute top-full right-0 mt-3 text-[9px] tracking-[0.4em] uppercase whitespace-nowrap pointer-events-none"
+          style={{
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 300,
+            color: '#7a5a66',
+            opacity: 0,
+            transition: 'opacity 0.3s ease',
+          }}
+        >
+          a letter for you
+        </span>
+      </button>
+
+      {/* ============================================================
+          MAIN CONTENT
+         ============================================================ */}
       <div className="relative z-10 flex flex-col items-center px-6 pt-20 pb-24">
         {/* Heart */}
         <div
@@ -341,22 +454,9 @@ function App() {
           </div>
         </div>
 
-        {/* Envelope */}
+        {/* Hint to open letter */}
         <div
-          className="mt-14 md:mt-20 w-full flex justify-center"
-          style={{
-            opacity: phase >= 5 ? 1 : 0,
-            transform: phase >= 5 ? 'translateY(0)' : 'translateY(20px)',
-            transition:
-              'opacity 1.6s ease, transform 1.6s cubic-bezier(0.65,0,0.35,1)',
-          }}
-        >
-          <Envelope open={envelopeOpen} onToggle={handleEnvelope} />
-        </div>
-
-        {/* Bottom signature — now part of flow so page grows with content */}
-        <div
-          className="mt-8 pb-10 flex justify-center pointer-events-none"
+          className="mt-14 md:mt-16 flex flex-col items-center"
           style={{
             opacity: phase >= 5 ? 1 : 0,
             transition: 'opacity 2s ease 0.6s',
@@ -371,6 +471,198 @@ function App() {
         </div>
       </div>
 
+      {/* ============================================================
+          LETTER MODAL
+         ============================================================ */}
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center p-6"
+        style={{
+          background: letterOpen ? 'rgba(11, 7, 9, 0.78)' : 'rgba(11, 7, 9, 0)',
+          backdropFilter: letterOpen ? 'blur(14px)' : 'blur(0px)',
+          WebkitBackdropFilter: letterOpen ? 'blur(14px)' : 'blur(0px)',
+          opacity: letterOpen ? 1 : 0,
+          pointerEvents: letterOpen ? 'auto' : 'none',
+          transition:
+            'opacity 0.5s ease, backdrop-filter 0.5s ease, -webkit-backdrop-filter 0.5s ease',
+        }}
+        onClick={closeLetter}
+        aria-hidden={!letterOpen}
+      >
+        {/* Close button */}
+        <button
+          type="button"
+          onClick={closeLetter}
+          aria-label="Close letter"
+          className="absolute top-5 right-5 md:top-7 md:right-7 flex items-center justify-center rounded-full transition-all duration-300 hover:rotate-90"
+          style={{
+            width: 'clamp(38px, 9vw, 44px)',
+            height: 'clamp(38px, 9vw, 44px)',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            color: '#f4e4e9',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          >
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+
+        {/* Letter stack */}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="flex flex-col items-center"
+          style={{
+            maxWidth: 'min(440px, 100%)',
+            width: '100%',
+            transform: letterOpen
+              ? 'translateY(0) scale(1)'
+              : 'translateY(40px) scale(0.94)',
+            opacity: letterOpen ? 1 : 0,
+            transition: letterOpen
+              ? 'transform 0.8s cubic-bezier(0.65, 0, 0.35, 1) 0.15s, opacity 0.6s ease 0.15s'
+              : 'transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.35s ease',
+            maxHeight: '85vh',
+          }}
+        >
+          {/* Wax seal on top */}
+          <div
+            style={{
+              zIndex: 3,
+              width: 'clamp(46px, 11vw, 54px)',
+              height: 'clamp(46px, 11vw, 54px)',
+              borderRadius: '50%',
+              background:
+                'radial-gradient(circle at 30% 28%, #f4c3cf 0%, #d87992 35%, #c4607a 68%, #8d3c53 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: "'Cormorant Garamond', serif",
+              fontStyle: 'italic',
+              fontSize: 'clamp(18px, 5vw, 22px)',
+              color: '#3d0f1c',
+              marginBottom: '-24px',
+              boxShadow:
+                '0 8px 20px rgba(196,96,122,0.55), inset 0 -4px 6px rgba(0,0,0,0.28), inset 2px 2px 3px rgba(255,255,255,0.3)',
+              transform: letterOpen ? 'rotate(0deg)' : 'rotate(-15deg)',
+              transition: 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1) 0.3s',
+            }}
+          >
+            F
+          </div>
+
+          {/* Letter paper */}
+          <div
+            className="relative w-full overflow-y-auto"
+            style={{
+              background:
+                'linear-gradient(145deg, #f8eee7 0%, #efe0d8 100%)',
+              borderRadius: '3px',
+              border: '1px solid rgba(95, 55, 65, 0.15)',
+              padding: '48px clamp(24px, 7vw, 34px) clamp(28px, 7vw, 36px)',
+              fontFamily: "'Caveat', cursive",
+              fontSize: 'clamp(16px, 4.4vw, 18px)',
+              lineHeight: 1.55,
+              color: '#3d2830',
+              boxShadow:
+                '0 40px 90px -25px rgba(0,0,0,0.65), 0 0 60px -20px rgba(196,96,122,0.25), inset 0 1px 0 rgba(255,255,255,0.4)',
+              maxHeight: 'calc(85vh - 30px)',
+            }}
+          >
+            {/* Paper texture */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                opacity: 0.16,
+                backgroundImage:
+                  'radial-gradient(rgba(70,40,45,0.35) 0.5px, transparent 0.5px)',
+                backgroundSize: '4px 4px',
+                mixBlendMode: 'multiply',
+              }}
+            />
+
+            {/* Content */}
+            <div className="relative z-10">
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: '1.25em',
+                  marginBottom: '14px',
+                  fontStyle: 'italic',
+                }}
+              >
+                Bebe,
+              </p>
+
+              <p style={{ margin: 0 }}>
+                This little countdown isn't really about a date. It's about
+                you.
+              </p>
+
+              <p style={{ margin: '12px 0 0' }}>
+                Somewhere along the way, you became someone very special to me.
+              </p>
+
+              <p style={{ margin: '12px 0 0' }}>
+                And now I can't wait for December 9th — for your smile, your
+                presence, and that moment I've been looking forward to.
+              </p>
+
+              <p style={{ margin: '14px 0 0' }}>
+                Until then, keep this little secret close.
+              </p>
+
+              <p
+                style={{
+                  margin: '20px 0 0',
+                  textAlign: 'right',
+                  fontStyle: 'italic',
+                  fontSize: '1.05em',
+                }}
+              >
+                — always, me
+              </p>
+
+              {/* Signature divider */}
+              <div
+                style={{
+                  marginTop: '22px',
+                  height: '1px',
+                  width: '100%',
+                  background:
+                    'linear-gradient(90deg, transparent, rgba(140, 80, 95, 0.2), transparent)',
+                }}
+              />
+
+              <p
+                style={{
+                  margin: '12px 0 0',
+                  fontSize: '10px',
+                  textAlign: 'center',
+                  color: 'rgba(95, 55, 65, 0.5)',
+                  fontFamily: "'Inter', sans-serif",
+                  letterSpacing: '0.35em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                sealed · dec 09
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <style>{`
         @keyframes breathe {
           0%, 100% { transform: scale(1); }
@@ -379,6 +671,10 @@ function App() {
         @keyframes blink {
           0%, 49% { opacity: 1; }
           50%, 100% { opacity: 0; }
+        }
+        @keyframes letterPulse {
+          0% { transform: scale(1); opacity: 0.7; }
+          100% { transform: scale(1.7); opacity: 0; }
         }
       `}</style>
     </div>
@@ -483,295 +779,6 @@ function Dot() {
     >
       ·
     </span>
-  )
-}
-
-// ---------- Envelope ----------
-function Envelope({
-  open,
-  onToggle,
-}: {
-  open: boolean
-  onToggle: () => void
-}) {
-  return (
-    <div className="flex flex-col items-center">
-      {/* Wrapper reserves vertical space so the page grows and stays scrollable.
-          Envelope sits at the bottom of the wrapper via paddingTop. */}
-      <div
-        className="relative"
-        style={{
-          width: 'clamp(250px, 76vw, 320px)',
-          // Reserve room for the letter to slide up into. Slightly more than
-          // letter's visible height so nothing overlaps the countdown above.
-          paddingTop: 'clamp(280px, 74vw, 360px)',
-        }}
-      >
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-label={open ? 'Close letter' : 'Open letter'}
-          className="relative block w-full appearance-none border-0 bg-transparent p-0 outline-none focus-visible:ring-1 focus-visible:ring-[#c4607a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0b0709]"
-          style={{
-            position: 'relative',
-            aspectRatio: '3 / 2',
-            cursor: 'pointer',
-            perspective: '1400px',
-            WebkitTapHighlightColor: 'transparent',
-            zIndex: 10,
-          }}
-        >
-          {/* =========================================================
-              LETTER
-             ========================================================= */}
-          <div
-            style={{
-              position: 'absolute',
-              left: '6%',
-              right: '6%',
-              bottom: '7%',
-              padding: '22px 22px 24px',
-              background:
-                'linear-gradient(145deg, #f8eee7 0%, #efe0d8 100%)',
-              borderRadius: '2px',
-              border: '1px solid rgba(95, 55, 65, 0.12)',
-              fontFamily: "'Caveat', cursive",
-              fontSize: 'clamp(16px, 4.4vw, 18px)',
-              lineHeight: 1.5,
-              color: '#3d2830',
-              textAlign: 'left',
-
-              transform: open
-                ? 'translateY(calc(-100% - 20px)) rotate(-0.4deg)'
-                : 'translateY(0) rotate(0deg)',
-
-              opacity: open ? 1 : 0,
-
-              transition: open
-                ? 'transform 1.05s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.45s ease 0.25s'
-                : 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.2s ease',
-
-              boxShadow: open
-                ? '0 24px 45px -16px rgba(0,0,0,0.55)'
-                : '0 8px 20px -12px rgba(0,0,0,0.35)',
-
-              zIndex: 1,
-              pointerEvents: open ? 'auto' : 'none',
-            }}
-          >
-            {/* Paper texture */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                pointerEvents: 'none',
-                opacity: 0.14,
-                backgroundImage:
-                  'radial-gradient(rgba(70,40,45,0.35) 0.5px, transparent 0.5px)',
-                backgroundSize: '4px 4px',
-              }}
-            />
-
-            {/* Letter content */}
-            <div
-              style={{
-                position: 'relative',
-                zIndex: 1,
-              }}
-            >
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: '1.18em',
-                  marginBottom: '8px',
-                }}
-              >
-                Bebe,
-              </p>
-
-              <p style={{ margin: 0 }}>
-                This little countdown isn't really about a date. It's about you.
-              </p>
-
-              <p style={{ margin: '9px 0 0' }}>
-                I just wanted you to know that somewhere along the way, you
-                became someone very special to me.
-              </p>
-
-              <p style={{ margin: '9px 0 0' }}>
-                And now I can't wait for December 9th — for your smile, your
-                presence, and that moment I've been looking forward to.
-              </p>
-
-              <p style={{ margin: '10px 0 0' }}>
-                Until then, keep this little secret close.
-              </p>
-
-              <p
-                style={{
-                  margin: '9px 0 0',
-                  textAlign: 'right',
-                  fontStyle: 'italic',
-                }}
-              >
-                — always, me
-              </p>
-            </div>
-          </div>
-
-          {/* =========================================================
-              ENVELOPE BACK
-             ========================================================= */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background:
-                'linear-gradient(145deg, #2b191f 0%, #130a0e 75%)',
-              border: '1px solid rgba(196, 96, 122, 0.42)',
-              borderRadius: '5px',
-              boxShadow:
-                '0 28px 55px -18px rgba(0,0,0,0.78), inset 0 1px 0 rgba(255,255,255,0.035)',
-              zIndex: 0,
-              overflow: 'hidden',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background:
-                  'linear-gradient(135deg, rgba(255,255,255,0.035), transparent 35%, rgba(196,96,122,0.025))',
-                pointerEvents: 'none',
-              }}
-            />
-          </div>
-
-          {/* =========================================================
-              INNER LETTER SHADOW
-             ========================================================= */}
-          <div
-            style={{
-              position: 'absolute',
-              left: '5%',
-              right: '5%',
-              bottom: '8%',
-              height: '45%',
-              background: 'rgba(0,0,0,0.38)',
-              filter: 'blur(12px)',
-              opacity: open ? 0.12 : 0.55,
-              transition: 'opacity 0.7s ease',
-              zIndex: 1,
-              pointerEvents: 'none',
-            }}
-          />
-
-          {/* =========================================================
-              FRONT POCKET
-             ========================================================= */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background:
-                'linear-gradient(145deg, #2d1b21 0%, #191014 100%)',
-              border: '1px solid rgba(196, 96, 122, 0.32)',
-              borderRadius: '5px',
-              clipPath:
-                'polygon(0 42%, 50% 91%, 100% 42%, 100% 100%, 0 100%)',
-              zIndex: 2,
-              pointerEvents: 'none',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.025)',
-            }}
-          />
-
-          {/* =========================================================
-              TOP FLAP
-             ========================================================= */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '59%',
-              background:
-                'linear-gradient(155deg, #351e26 0%, #1b1015 72%)',
-              clipPath: 'polygon(0 0, 100% 0, 50% 100%)',
-              transformOrigin: 'top center',
-              transform: open ? 'rotateX(170deg)' : 'rotateX(0deg)',
-              transition: 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
-              zIndex: 3,
-              borderRadius: '5px 5px 0 0',
-              boxShadow: open
-                ? '0 10px 18px rgba(0,0,0,0.12)'
-                : '0 3px 12px rgba(0,0,0,0.38)',
-              pointerEvents: 'none',
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background:
-                  'linear-gradient(150deg, rgba(255,255,255,0.045), transparent 45%)',
-                pointerEvents: 'none',
-              }}
-            />
-          </div>
-
-          {/* =========================================================
-              WAX SEAL
-             ========================================================= */}
-          <div
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: '48%',
-              width: 'clamp(32px, 9vw, 42px)',
-              height: 'clamp(32px, 9vw, 42px)',
-              borderRadius: '50%',
-              background:
-                'radial-gradient(circle at 30% 28%, #f4c3cf 0%, #d87992 35%, #c4607a 68%, #8d3c53 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: "'Cormorant Garamond', serif",
-              fontStyle: 'italic',
-              fontSize: 'clamp(15px, 4vw, 18px)',
-              color: '#3d0f1c',
-              zIndex: 4,
-              transform: open
-                ? 'translate(-50%, -50%) scale(0.7) rotate(-8deg)'
-                : 'translate(-50%, -50%) scale(1) rotate(0deg)',
-              opacity: open ? 0 : 1,
-              transition:
-                'transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.3s ease 0.12s',
-              boxShadow:
-                '0 5px 14px rgba(196,96,122,0.48), inset 0 -3px 5px rgba(0,0,0,0.25), inset 1px 1px 2px rgba(255,255,255,0.25)',
-              pointerEvents: 'none',
-            }}
-          >
-            F
-          </div>
-        </button>
-      </div>
-
-      {/* Hint */}
-      <span
-        className="mt-4 text-[#7a5a66] text-[9px] tracking-[0.45em] uppercase"
-        style={{
-          fontFamily: "'Inter', sans-serif",
-          fontWeight: 300,
-          opacity: open ? 0 : 0.7,
-          transform: open ? 'translateY(4px)' : 'translateY(0)',
-          transition: 'opacity 0.4s ease, transform 0.4s ease',
-          pointerEvents: 'none',
-        }}
-      >
-        tap to open
-      </span>
-    </div>
   )
 }
 
