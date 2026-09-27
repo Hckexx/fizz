@@ -343,7 +343,7 @@ function App() {
 
         {/* Envelope */}
         <div
-  className="mt-14 md:mt-20 w-full flex justify-center"
+  className="mt-16 md:mt-20 w-full flex justify-center"
           style={{
             opacity: phase >= 5 ? 1 : 0,
             transform: phase >= 5 ? 'translateY(0)' : 'translateY(20px)',
@@ -539,7 +539,7 @@ function Envelope({
               textAlign: 'left',
 
               transform: open
-  ? 'translateY(-145px) rotate(-0.4deg)'
+  ? 'translateY(-110px) rotate(-0.4deg)'
   : 'translateY(0) rotate(0deg)',
 
               opacity: open ? 1 : 0,
