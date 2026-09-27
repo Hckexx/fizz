@@ -378,7 +378,7 @@ function App() {
 
       {/* Bottom signature */}
       <div
-        className="fixed bottom-[6vh] left-0 right-0 z-10 flex justify-center pointer-events-none"
+        className="mt-8 flex justify-center pointer-events-none"
         style={{
           opacity: phase >= 5 ? 1 : 0,
           transition: 'opacity 2s ease 0.6s',
@@ -508,6 +508,7 @@ function Dot() {
 }
 
 // ---------- Envelope ----------
+// ---------- Envelope ----------
 function Envelope({
   open,
   onToggle,
@@ -520,15 +521,15 @@ function Envelope({
       <div
         className="relative"
         style={{
-          width: 'clamp(260px, 72vw, 320px)',
-          paddingTop: 'clamp(260px, 68vw, 360px)',
+          width: 'clamp(250px, 76vw, 320px)',
+          height: 'clamp(175px, 46vw, 215px)',
         }}
       >
         <button
           type="button"
           onClick={onToggle}
           aria-label={open ? 'Close letter' : 'Open letter'}
-          className="relative block w-full appearance-none border-0 bg-transparent p-0 outline-none"
+          className="relative block w-full appearance-none border-0 bg-transparent p-0 outline-none focus-visible:ring-1 focus-visible:ring-[#c4607a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0b0709]"
           style={{
             aspectRatio: '3 / 2',
             cursor: 'pointer',
@@ -545,28 +546,30 @@ function Envelope({
               left: '6%',
               right: '6%',
               bottom: '7%',
-              minHeight: 'max(82%, 260px)',
-              padding: '22px 24px',
+              minHeight: '160px',
+              padding: '18px 20px',
+
               background:
                 'linear-gradient(145deg, #f8eee7 0%, #efe0d8 100%)',
+
               borderRadius: '2px',
               border: '1px solid rgba(95, 55, 65, 0.12)',
+
               fontFamily: "'Caveat', cursive",
               fontSize: 'clamp(15px, 4vw, 17px)',
-              lineHeight: 1.5,
+              lineHeight: 1.48,
               color: '#3d2830',
               textAlign: 'left',
 
               transform: open
-                ? 'translateY(calc(-92% - 18px)) rotate(-0.35deg)'
+                ? 'translateY(calc(-100% - 18px)) rotate(-0.4deg)'
                 : 'translateY(0) rotate(0deg)',
 
               opacity: open ? 1 : 0,
 
-              transition: [
-                'transform 1.05s cubic-bezier(0.65, 0, 0.35, 1)',
-                'opacity 0.45s ease 0.25s',
-              ].join(', '),
+              transition: open
+                ? 'transform 1.05s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.45s ease 0.25s'
+                : 'transform 1.05s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.2s ease',
 
               boxShadow: open
                 ? '0 24px 45px -16px rgba(0,0,0,0.55)'
@@ -582,26 +585,69 @@ function Envelope({
                 position: 'absolute',
                 inset: 0,
                 pointerEvents: 'none',
-                opacity: 0.16,
+                opacity: 0.14,
                 backgroundImage:
                   'radial-gradient(rgba(70,40,45,0.35) 0.5px, transparent 0.5px)',
                 backgroundSize: '4px 4px',
               }}
             />
 
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              {LETTER_LINES.map((line, i) => (
-                <p
-                  key={i}
-                  style={{
-                    margin: 0,
-                    whiteSpace: 'pre-wrap',
-                    minHeight: '1em',
-                  }}
-                >
-                  {line || '\u00A0'}
-                </p>
-              ))}
+            {/* Letter content */}
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 1,
+              }}
+            >
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: '1.15em',
+                  marginBottom: '7px',
+                }}
+              >
+                Bebe,
+              </p>
+
+              <p style={{ margin: 0 }}>
+                I don't think a few words could ever explain what you mean to
+                me, but I wanted to try anyway.
+              </p>
+
+              <p style={{ margin: '8px 0 0' }}>
+                Somewhere along the way, you became one of my favourite parts
+                of life — the person I think about in the quiet moments, the
+                one who can make an ordinary day feel a little more special.
+              </p>
+
+              <p style={{ margin: '8px 0 0' }}>
+                So this little countdown isn't really about a date.
+                It's about you.
+              </p>
+
+              <p style={{ margin: '8px 0 0' }}>
+                And when December 9th finally arrives, I just hope I get to see
+                that smile of yours and make a memory you'll keep with you.
+              </p>
+
+              <p
+                style={{
+                  margin: '10px 0 0',
+                  fontSize: '1.05em',
+                }}
+              >
+                Until then, keep a little piece of this with you.
+              </p>
+
+              <p
+                style={{
+                  margin: '8px 0 0',
+                  textAlign: 'right',
+                  fontStyle: 'italic',
+                }}
+              >
+                — always, me ❤️
+              </p>
             </div>
           </div>
 
@@ -612,12 +658,16 @@ function Envelope({
             style={{
               position: 'absolute',
               inset: 0,
+
               background:
                 'linear-gradient(145deg, #2b191f 0%, #130a0e 75%)',
+
               border: '1px solid rgba(196, 96, 122, 0.42)',
               borderRadius: '5px',
+
               boxShadow:
                 '0 28px 55px -18px rgba(0,0,0,0.78), inset 0 1px 0 rgba(255,255,255,0.035)',
+
               zIndex: 0,
               overflow: 'hidden',
             }}
@@ -643,10 +693,14 @@ function Envelope({
               right: '5%',
               bottom: '8%',
               height: '45%',
-              background: 'rgba(0,0,0,0.35)',
+
+              background: 'rgba(0,0,0,0.38)',
               filter: 'blur(12px)',
-              opacity: open ? 0.15 : 0.5,
+
+              opacity: open ? 0.12 : 0.55,
+
               transition: 'opacity 0.7s ease',
+
               zIndex: 1,
               pointerEvents: 'none',
             }}
@@ -659,15 +713,21 @@ function Envelope({
             style={{
               position: 'absolute',
               inset: 0,
+
               background:
                 'linear-gradient(145deg, #2d1b21 0%, #191014 100%)',
+
               border: '1px solid rgba(196, 96, 122, 0.32)',
               borderRadius: '5px',
+
               clipPath:
                 'polygon(0 42%, 50% 91%, 100% 42%, 100% 100%, 0 100%)',
+
               zIndex: 2,
               pointerEvents: 'none',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.025)',
+
+              boxShadow:
+                'inset 0 1px 0 rgba(255,255,255,0.025)',
             }}
           />
 
@@ -689,11 +749,15 @@ function Envelope({
 
               transformOrigin: 'top center',
 
-              transform: open ? 'rotateX(170deg)' : 'rotateX(0deg)',
+              transform: open
+                ? 'rotateX(170deg)'
+                : 'rotateX(0deg)',
 
-              transition: 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
+              transition:
+                'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
 
               zIndex: 3,
+
               borderRadius: '5px 5px 0 0',
 
               boxShadow: open
@@ -707,8 +771,10 @@ function Envelope({
               style={{
                 position: 'absolute',
                 inset: 0,
+
                 background:
                   'linear-gradient(150deg, rgba(255,255,255,0.045), transparent 45%)',
+
                 pointerEvents: 'none',
               }}
             />
@@ -743,13 +809,13 @@ function Envelope({
               zIndex: 4,
 
               transform: open
-                ? 'translate(-50%, -50%) scale(0.55) rotate(12deg)'
+                ? 'translate(-50%, -50%) scale(0.7) rotate(-8deg)'
                 : 'translate(-50%, -50%) scale(1) rotate(0deg)',
 
               opacity: open ? 0 : 1,
 
               transition:
-                'transform 0.45s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.35s ease',
+                'transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.3s ease 0.12s',
 
               boxShadow:
                 '0 5px 14px rgba(196,96,122,0.48), inset 0 -3px 5px rgba(0,0,0,0.25), inset 1px 1px 2px rgba(255,255,255,0.25)',
@@ -764,13 +830,19 @@ function Envelope({
 
       {/* Hint */}
       <span
-        className="mt-5 text-[#7a5a66] text-[9px] tracking-[0.45em] uppercase"
+        className="mt-4 text-[#7a5a66] text-[9px] tracking-[0.45em] uppercase"
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 300,
+
           opacity: open ? 0 : 0.7,
-          transform: open ? 'translateY(4px)' : 'translateY(0)',
-          transition: 'opacity 0.4s ease, transform 0.4s ease',
+
+          transform: open
+            ? 'translateY(4px)'
+            : 'translateY(0)',
+
+          transition:
+            'opacity 0.4s ease, transform 0.4s ease',
         }}
       >
         tap to open
