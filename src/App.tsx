@@ -156,8 +156,6 @@ function App() {
     setEnvelopeOpen((v) => !v)
   }
 
-  const pad = (n: number) => String(n).padStart(2, '0')
-
   return (
     <div className="relative min-h-[100dvh] overflow-x-hidden bg-[#0b0709] selection:bg-[#c4607a] selection:text-[#f4e4e9]">
       {/* Warm film tone */}
