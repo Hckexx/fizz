@@ -136,7 +136,7 @@ function App() {
   }
 
   return (
-    <div className="relative min-h-[100dvh] overflow-x-hidden overflow-y-auto bg-[#0b0709] selection:bg-[#c4607a] selection:text-[#f4e4e9]">
+    <div className="relative min-h-[100dvh] bg-[#0b0709] selection:bg-[#c4607a] selection:text-[#f4e4e9]">
       {/* Warm film tone */}
       <div
         className="fixed inset-0 pointer-events-none z-[1]"
@@ -186,8 +186,8 @@ function App() {
         }}
       />
 
-      {/* Main content */}
-      <div className="relative z-10 flex min-h-[100dvh] flex-col items-center px-6 pt-20 pb-24">
+      {/* Main content — uses min-height so page can grow/scroll */}
+      <div className="relative z-10 flex flex-col items-center px-6 pt-20 pb-24">
         {/* Heart */}
         <div
           className="mb-10 md:mb-12"
@@ -353,22 +353,22 @@ function App() {
         >
           <Envelope open={envelopeOpen} onToggle={handleEnvelope} />
         </div>
-      </div>
 
-      {/* Bottom signature */}
-      <div
-        className="mt-8 pb-10 flex justify-center pointer-events-none"
-        style={{
-          opacity: phase >= 5 ? 1 : 0,
-          transition: 'opacity 2s ease 0.6s',
-        }}
-      >
-        <span
-          className="text-[#5a3d48] text-[9px] tracking-[0.45em] uppercase"
-          style={{ fontFamily: "'Inter', sans-serif", fontWeight: 300 }}
+        {/* Bottom signature — now part of flow so page grows with content */}
+        <div
+          className="mt-8 pb-10 flex justify-center pointer-events-none"
+          style={{
+            opacity: phase >= 5 ? 1 : 0,
+            transition: 'opacity 2s ease 0.6s',
+          }}
         >
-          for her · dec 09
-        </span>
+          <span
+            className="text-[#5a3d48] text-[9px] tracking-[0.45em] uppercase"
+            style={{ fontFamily: "'Inter', sans-serif", fontWeight: 300 }}
+          >
+            for her · dec 09
+          </span>
+        </div>
       </div>
 
       <style>{`
@@ -495,35 +495,30 @@ function Envelope({
   onToggle: () => void
 }) {
   return (
-    <div
-      className="relative flex flex-col items-center"
-      style={{
-        width: '100%',
-        minHeight: open
-          ? 'clamp(570px, 150vw, 680px)'
-          : 'clamp(260px, 70vw, 330px)',
-        transition: 'min-height 1s cubic-bezier(0.65, 0, 0.35, 1)',
-      }}
-    >
-      {/* The envelope stays in a real layout box so the page can scroll naturally. */}
+    <div className="flex flex-col items-center">
+      {/* Wrapper reserves vertical space so the page grows and stays scrollable.
+          Envelope sits at the bottom of the wrapper via paddingTop. */}
       <div
         className="relative"
         style={{
           width: 'clamp(250px, 76vw, 320px)',
-          height: 'clamp(170px, 45vw, 215px)',
-          marginTop: open ? 'clamp(250px, 62vw, 285px)' : '0px',
-          transition: 'margin-top 1s cubic-bezier(0.65, 0, 0.35, 1)',
+          // Reserve room for the letter to slide up into. Slightly more than
+          // letter's visible height so nothing overlaps the countdown above.
+          paddingTop: 'clamp(280px, 74vw, 360px)',
         }}
       >
         <button
           type="button"
           onClick={onToggle}
           aria-label={open ? 'Close letter' : 'Open letter'}
-          className="relative block w-full h-full appearance-none border-0 bg-transparent p-0 outline-none focus-visible:ring-1 focus-visible:ring-[#c4607a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0b0709]"
+          className="relative block w-full appearance-none border-0 bg-transparent p-0 outline-none focus-visible:ring-1 focus-visible:ring-[#c4607a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0b0709]"
           style={{
+            position: 'relative',
+            aspectRatio: '3 / 2',
             cursor: 'pointer',
             perspective: '1400px',
             WebkitTapHighlightColor: 'transparent',
+            zIndex: 10,
           }}
         >
           {/* =========================================================
@@ -545,16 +540,21 @@ function Envelope({
               lineHeight: 1.5,
               color: '#3d2830',
               textAlign: 'left',
+
               transform: open
-                ? 'translateY(-245px) rotate(-0.4deg)'
+                ? 'translateY(calc(-100% - 20px)) rotate(-0.4deg)'
                 : 'translateY(0) rotate(0deg)',
+
               opacity: open ? 1 : 0,
+
               transition: open
                 ? 'transform 1.05s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.45s ease 0.25s'
                 : 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.2s ease',
+
               boxShadow: open
                 ? '0 24px 45px -16px rgba(0,0,0,0.55)'
                 : '0 8px 20px -12px rgba(0,0,0,0.35)',
+
               zIndex: 1,
               pointerEvents: open ? 'auto' : 'none',
             }}
@@ -590,19 +590,17 @@ function Envelope({
               </p>
 
               <p style={{ margin: 0 }}>
-                This little countdown isn't really about a date.
-                It's about you.
+                This little countdown isn't really about a date. It's about you.
               </p>
 
               <p style={{ margin: '9px 0 0' }}>
-                I just wanted you to know that somewhere along the way,
-                you became someone very special to me.
+                I just wanted you to know that somewhere along the way, you
+                became someone very special to me.
               </p>
 
               <p style={{ margin: '9px 0 0' }}>
-                And now I can't wait for December 9th —
-                for your smile, your presence, and that moment
-                I've been looking forward to.
+                And now I can't wait for December 9th — for your smile, your
+                presence, and that moment I've been looking forward to.
               </p>
 
               <p style={{ margin: '10px 0 0' }}>
@@ -616,7 +614,7 @@ function Envelope({
                   fontStyle: 'italic',
                 }}
               >
-                — always, me ❤️
+                — always, me
               </p>
             </div>
           </div>
@@ -702,15 +700,13 @@ function Envelope({
               clipPath: 'polygon(0 0, 100% 0, 50% 100%)',
               transformOrigin: 'top center',
               transform: open ? 'rotateX(170deg)' : 'rotateX(0deg)',
-              transition:
-                'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
+              transition: 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
               zIndex: 3,
               borderRadius: '5px 5px 0 0',
               boxShadow: open
                 ? '0 10px 18px rgba(0,0,0,0.12)'
                 : '0 3px 12px rgba(0,0,0,0.38)',
               pointerEvents: 'none',
-              backfaceVisibility: 'hidden',
             }}
           >
             <div
@@ -770,6 +766,7 @@ function Envelope({
           opacity: open ? 0 : 0.7,
           transform: open ? 'translateY(4px)' : 'translateY(0)',
           transition: 'opacity 0.4s ease, transform 0.4s ease',
+          pointerEvents: 'none',
         }}
       >
         tap to open
