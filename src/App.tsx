@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo } from 'react'
 
-const TARGET_MONTH = 11 // December (0-indexed)
+const TARGET_MONTH = 11
 const TARGET_DAY = 9
 
 function getTargetDate() {
@@ -49,7 +49,6 @@ function App() {
     Math.min(1, (TOTAL_DAYS - countdown.days) / TOTAL_DAYS)
   )
 
-  // Staged reveal
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase(1), 500),
@@ -61,7 +60,6 @@ function App() {
     return () => timers.forEach(clearTimeout)
   }, [])
 
-  // Dust particles
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -71,7 +69,6 @@ function App() {
     let raf = 0
     let w = window.innerWidth
     let h = window.innerHeight
-
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
     const setup = () => {
@@ -137,7 +134,6 @@ function App() {
 
   return (
     <div className="relative min-h-[100dvh] overflow-x-hidden bg-[#0b0709] selection:bg-[#c4607a] selection:text-[#f4e4e9]">
-      {/* Warm film tone */}
       <div
         className="fixed inset-0 pointer-events-none z-[1]"
         style={{
@@ -146,7 +142,6 @@ function App() {
         }}
       />
 
-      {/* Warm color overlay */}
       <div
         className="fixed inset-0 pointer-events-none z-[2] mix-blend-soft-light opacity-60"
         style={{
@@ -155,7 +150,6 @@ function App() {
         }}
       />
 
-      {/* Film grain */}
       <div
         className="fixed inset-0 pointer-events-none z-[3] opacity-[0.055] mix-blend-overlay"
         style={{
@@ -164,13 +158,11 @@ function App() {
         }}
       />
 
-      {/* Dust */}
       <canvas
         ref={canvasRef}
         className="fixed inset-0 pointer-events-none z-[4]"
       />
 
-      {/* Letterbox bars */}
       <div
         className="fixed top-0 left-0 right-0 bg-black z-[20] pointer-events-none"
         style={{
@@ -186,9 +178,7 @@ function App() {
         }}
       />
 
-      {/* Main content */}
       <div className="relative z-10 flex min-h-[100dvh] flex-col items-center px-6 pt-20 pb-16">
-        {/* Heart */}
         <div
           className="mb-10 md:mb-12"
           style={{
@@ -234,7 +224,6 @@ function App() {
           </svg>
         </div>
 
-        {/* Name */}
         <h1
           className="text-[#f4e4e9] text-center leading-[0.95]"
           style={{
@@ -263,7 +252,6 @@ function App() {
           ))}
         </h1>
 
-        {/* Divider */}
         <div
           className="my-7 h-px"
           style={{
@@ -274,14 +262,12 @@ function App() {
           }}
         />
 
-        {/* Typing subtitle */}
         <TypingText
           text="Something is waiting for you"
           active={phase >= 3}
           speed={45}
         />
 
-        {/* Countdown */}
         <div
           className="mt-12 md:mt-16 w-full max-w-[440px]"
           style={{
@@ -301,7 +287,6 @@ function App() {
             <TimeUnit value={countdown.seconds} label="Sec" padded />
           </div>
 
-          {/* Progress bar */}
           <div className="mt-10 flex flex-col items-center">
             <div
               className="relative w-full max-w-[280px] h-px overflow-hidden"
@@ -341,9 +326,8 @@ function App() {
           </div>
         </div>
 
-        {/* Envelope */}
         <div
-  className="mt-16 md:mt-20 w-full flex justify-center"
+          className="mt-16 md:mt-20 w-full flex justify-center"
           style={{
             opacity: phase >= 5 ? 1 : 0,
             transform: phase >= 5 ? 'translateY(0)' : 'translateY(20px)',
@@ -355,7 +339,6 @@ function App() {
         </div>
       </div>
 
-      {/* Bottom signature */}
       <div
         className="mt-8 pb-10 flex justify-center pointer-events-none"
         style={{
@@ -385,7 +368,6 @@ function App() {
   )
 }
 
-// ---------- Typing subtitle ----------
 function TypingText({
   text,
   active,
@@ -436,7 +418,6 @@ function TypingText({
   )
 }
 
-// ---------- Time unit ----------
 function TimeUnit({
   value,
   label,
@@ -469,7 +450,6 @@ function TimeUnit({
   )
 }
 
-// ---------- Dot separator ----------
 function Dot() {
   return (
     <span
@@ -486,7 +466,6 @@ function Dot() {
   )
 }
 
-// ---------- Envelope ----------
 function Envelope({
   open,
   onToggle,
@@ -497,27 +476,29 @@ function Envelope({
   return (
     <div className="flex flex-col items-center">
       <div
-  className="relative"
-  style={{
-    width: 'clamp(250px, 76vw, 320px)',
-    height: 'clamp(170px, 45vw, 215px)',
-  }}
->
+        className="relative"
+        style={{
+          width: 'clamp(250px, 76vw, 320px)',
+          paddingTop: 'clamp(260px, 68vw, 340px)',
+        }}
+      >
         <button
           type="button"
           onClick={onToggle}
           aria-label={open ? 'Close letter' : 'Open letter'}
           className="relative block w-full appearance-none border-0 bg-transparent p-0 outline-none focus-visible:ring-1 focus-visible:ring-[#c4607a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#0b0709]"
           style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
             aspectRatio: '3 / 2',
             cursor: 'pointer',
             perspective: '1400px',
             WebkitTapHighlightColor: 'transparent',
           }}
         >
-          {/* =========================================================
-              LETTER
-             ========================================================= */}
+          {/* LETTER */}
           <div
             style={{
               position: 'absolute',
@@ -525,13 +506,10 @@ function Envelope({
               right: '6%',
               bottom: '7%',
               padding: '22px 22px 24px',
-
               background:
                 'linear-gradient(145deg, #f8eee7 0%, #efe0d8 100%)',
-
               borderRadius: '2px',
               border: '1px solid rgba(95, 55, 65, 0.12)',
-
               fontFamily: "'Caveat', cursive",
               fontSize: 'clamp(16px, 4.4vw, 18px)',
               lineHeight: 1.5,
@@ -539,8 +517,8 @@ function Envelope({
               textAlign: 'left',
 
               transform: open
-  ? 'translateY(-110px) rotate(-0.4deg)'
-  : 'translateY(0) rotate(0deg)',
+                ? 'translateY(calc(-100% - 20px)) rotate(-0.4deg)'
+                : 'translateY(0) rotate(0deg)',
 
               opacity: open ? 1 : 0,
 
@@ -570,70 +548,56 @@ function Envelope({
             />
 
             {/* Letter content */}
-            <div
-  style={{
-    position: 'relative',
-    zIndex: 1,
-  }}
->
-  <p
-    style={{
-      margin: 0,
-      fontSize: '1.18em',
-      marginBottom: '8px',
-    }}
-  >
-    Bebe,
-  </p>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: '1.18em',
+                  marginBottom: '8px',
+                }}
+              >
+                Bebe,
+              </p>
 
-  <p style={{ margin: 0 }}>
-    This little countdown isn't really about a date.
-    It's about you.
-  </p>
+              <p style={{ margin: 0 }}>
+                This little countdown isn't really about a date. It's about you.
+              </p>
 
-  <p style={{ margin: '9px 0 0' }}>
-    I just wanted you to know that somewhere along the way,
-    you became someone very special to me.
-  </p>
+              <p style={{ margin: '9px 0 0' }}>
+                Somewhere along the way, you became someone very special to me.
+              </p>
 
-  <p style={{ margin: '9px 0 0' }}>
-    And now I can't wait for December 9th —
-    for your smile, your presence, and that moment
-    I've been looking forward to.
-  </p>
+              <p style={{ margin: '9px 0 0' }}>
+                And now I can't wait for December 9th — for your smile, your
+                presence, and that moment I've been looking forward to.
+              </p>
 
-  <p style={{ margin: '10px 0 0' }}>
-    Until then, keep this little secret close.
-  </p>
+              <p style={{ margin: '10px 0 0' }}>
+                Until then, keep this little secret close.
+              </p>
 
-  <p
-    style={{
-      margin: '9px 0 0',
-      textAlign: 'right',
-      fontStyle: 'italic',
-    }}
-  >
-    — always, me ❤️
-  </p>
-</div>
+              <p
+                style={{
+                  margin: '9px 0 0',
+                  textAlign: 'right',
+                  fontStyle: 'italic',
+                }}
+              >
+                — always, me
+              </p>
+            </div>
+          </div>
 
-          {/* =========================================================
-              ENVELOPE BACK
-             ========================================================= */}
+          {/* ENVELOPE BACK */}
           <div
             style={{
               position: 'absolute',
               inset: 0,
-
-              background:
-                'linear-gradient(145deg, #2b191f 0%, #130a0e 75%)',
-
+              background: 'linear-gradient(145deg, #2b191f 0%, #130a0e 75%)',
               border: '1px solid rgba(196, 96, 122, 0.42)',
               borderRadius: '5px',
-
               boxShadow:
                 '0 28px 55px -18px rgba(0,0,0,0.78), inset 0 1px 0 rgba(255,255,255,0.035)',
-
               zIndex: 0,
               overflow: 'hidden',
             }}
@@ -649,9 +613,7 @@ function Envelope({
             />
           </div>
 
-          {/* =========================================================
-              INNER LETTER SHADOW
-             ========================================================= */}
+          {/* INNER LETTER SHADOW */}
           <div
             style={{
               position: 'absolute',
@@ -659,46 +621,32 @@ function Envelope({
               right: '5%',
               bottom: '8%',
               height: '45%',
-
               background: 'rgba(0,0,0,0.38)',
               filter: 'blur(12px)',
-
               opacity: open ? 0.12 : 0.55,
-
               transition: 'opacity 0.7s ease',
-
               zIndex: 1,
               pointerEvents: 'none',
             }}
           />
 
-          {/* =========================================================
-              FRONT POCKET
-             ========================================================= */}
+          {/* FRONT POCKET */}
           <div
             style={{
               position: 'absolute',
               inset: 0,
-
-              background:
-                'linear-gradient(145deg, #2d1b21 0%, #191014 100%)',
-
+              background: 'linear-gradient(145deg, #2d1b21 0%, #191014 100%)',
               border: '1px solid rgba(196, 96, 122, 0.32)',
               borderRadius: '5px',
-
               clipPath:
                 'polygon(0 42%, 50% 91%, 100% 42%, 100% 100%, 0 100%)',
-
               zIndex: 2,
               pointerEvents: 'none',
-
               boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.025)',
             }}
           />
 
-          {/* =========================================================
-              TOP FLAP
-             ========================================================= */}
+          {/* TOP FLAP */}
           <div
             style={{
               position: 'absolute',
@@ -706,26 +654,16 @@ function Envelope({
               left: 0,
               right: 0,
               height: '59%',
-
-              background:
-                'linear-gradient(155deg, #351e26 0%, #1b1015 72%)',
-
+              background: 'linear-gradient(155deg, #351e26 0%, #1b1015 72%)',
               clipPath: 'polygon(0 0, 100% 0, 50% 100%)',
-
               transformOrigin: 'top center',
-
               transform: open ? 'rotateX(170deg)' : 'rotateX(0deg)',
-
               transition: 'transform 1s cubic-bezier(0.65, 0, 0.35, 1)',
-
               zIndex: 3,
-
               borderRadius: '5px 5px 0 0',
-
               boxShadow: open
                 ? '0 10px 18px rgba(0,0,0,0.12)'
                 : '0 3px 12px rgba(0,0,0,0.38)',
-
               pointerEvents: 'none',
             }}
           >
@@ -733,55 +671,40 @@ function Envelope({
               style={{
                 position: 'absolute',
                 inset: 0,
-
                 background:
                   'linear-gradient(150deg, rgba(255,255,255,0.045), transparent 45%)',
-
                 pointerEvents: 'none',
               }}
             />
           </div>
 
-          {/* =========================================================
-              WAX SEAL
-             ========================================================= */}
+          {/* WAX SEAL */}
           <div
             style={{
               position: 'absolute',
               left: '50%',
               top: '48%',
-
               width: 'clamp(32px, 9vw, 42px)',
               height: 'clamp(32px, 9vw, 42px)',
-
               borderRadius: '50%',
-
               background:
                 'radial-gradient(circle at 30% 28%, #f4c3cf 0%, #d87992 35%, #c4607a 68%, #8d3c53 100%)',
-
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-
               fontFamily: "'Cormorant Garamond', serif",
               fontStyle: 'italic',
               fontSize: 'clamp(15px, 4vw, 18px)',
               color: '#3d0f1c',
-
               zIndex: 4,
-
               transform: open
                 ? 'translate(-50%, -50%) scale(0.7) rotate(-8deg)'
                 : 'translate(-50%, -50%) scale(1) rotate(0deg)',
-
               opacity: open ? 0 : 1,
-
               transition:
                 'transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.3s ease 0.12s',
-
               boxShadow:
                 '0 5px 14px rgba(196,96,122,0.48), inset 0 -3px 5px rgba(0,0,0,0.25), inset 1px 1px 2px rgba(255,255,255,0.25)',
-
               pointerEvents: 'none',
             }}
           >
@@ -790,17 +713,13 @@ function Envelope({
         </button>
       </div>
 
-      {/* Hint */}
       <span
         className="mt-4 text-[#7a5a66] text-[9px] tracking-[0.45em] uppercase"
         style={{
           fontFamily: "'Inter', sans-serif",
           fontWeight: 300,
-
           opacity: open ? 0 : 0.7,
-
           transform: open ? 'translateY(4px)' : 'translateY(0)',
-
           transition: 'opacity 0.4s ease, transform 0.4s ease',
         }}
       >
