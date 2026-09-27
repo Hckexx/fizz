@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  background: #0b0709;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+::selection {
+  background: #c4607a;
+  color: #f4e4e9;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  display: none;
+}
+
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  font-family: inherit;
+}
+
+/* Prevent iOS text size adjust on rotation */
+html {
+  -webkit-text-size-adjust: 100%;
+}
