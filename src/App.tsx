@@ -187,7 +187,7 @@ function App() {
       />
 
       {/* Main content */}
-      <div className="relative z-10 flex min-h-[100dvh] flex-col items-center justify-center px-6 py-24">
+      <div className="relative z-10 flex min-h-[100dvh] flex-col items-center px-6 pt-20 pb-16">
         {/* Heart */}
         <div
           className="mb-10 md:mb-12"
@@ -343,7 +343,7 @@ function App() {
 
         {/* Envelope */}
         <div
-          className="mt-16 md:mt-20"
+  className="mt-14 md:mt-20 w-full flex justify-center"
           style={{
             opacity: phase >= 5 ? 1 : 0,
             transform: phase >= 5 ? 'translateY(0)' : 'translateY(20px)',
@@ -497,12 +497,12 @@ function Envelope({
   return (
     <div className="flex flex-col items-center">
       <div
-        className="relative"
-        style={{
-          width: 'clamp(250px, 76vw, 320px)',
-          paddingTop: 'clamp(160px, 45vw, 220px)',
-        }}
-      >
+  className="relative"
+  style={{
+    width: 'clamp(250px, 76vw, 320px)',
+    height: 'clamp(170px, 45vw, 215px)',
+  }}
+>
         <button
           type="button"
           onClick={onToggle}
